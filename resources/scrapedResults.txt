@@ -1,0 +1,17 @@
+{'covidStats': {'CONFIRMED CASES': '1739',
+                'DEATHS': '60',
+                'TESTS ADMINISTERED': '63 372',
+                'notice': ' (PNG)',
+                'source': 'https://www.terviseamet.ee/en/covid19'},
+ 'getHelp': {'help': ['The hotline\xa0☎️\xa01247to provide information on '
+                      'issues related to coronavirus. (24 h).',
+                      'In questions regarding health, please call the family '
+                      'physician advisory line\xa0☎️ 1220or\xa0+372 634 '
+                      '6630\xa0(also for calls from abroad).',
+                      '\xa0Emergency number\xa0☎️\xa0',
+                      'If you have any questions, please send them to the '
+                      'Health Board via email:\xa0',
+                      'Consular assistance hotline\xa0(24 h)\xa0☎️\xa0'],
+             'title': 'WHERE TO FIND INFORMATION?'},
+ 'news': 'In Progress',
+ 'title': 'CURRENT SITUATION IN ESTONIA'}
