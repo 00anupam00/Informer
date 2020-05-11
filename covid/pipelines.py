@@ -11,5 +11,5 @@ class CovidPipeline(object):
         f = open("resources/scrapedResults.txt", "w+", encoding='utf8')
         f.write(str(item))
         f.close()
-        print("Scraped info dumped to resources!!")
+        # print("Scraped info dumped to resources!!")
         return item
