@@ -1,10 +1,10 @@
-{'covidStats': {'CONFIRMED CASES': '1741',
-                'DEATHS': '61',
-                'TESTS ADMINISTERED': '63 964',
+{'covidStats': {'CONFIRMED CASES': '1824',
+                'DEATHS': '65',
+                'TESTS ADMINISTERED': '76 590',
                 'notice': ' (PNG)',
                 'source': 'https://www.terviseamet.ee/en/covid19'},
  'getHelp': {'help': ['The hotline\xa0☎️\xa01247to provide information on '
-                      'issues related to coronavirus. (24 h).',
+                      'issues related to coronavirus\xa0(24 h).',
                       'In questions regarding health, please call the family '
                       'physician advisory line\xa0☎️ 1220or\xa0+372 634 '
                       '6630\xa0(also for calls from abroad).',

@@ -8,6 +8,10 @@ from scrapy.utils.log import configure_logging
 from covid.settings import ITEM_PIPELINES, BOT_NAME, SPIDER_MODULES
 from covid.spiders.covidEE import CovidEESpider
 
+from  covid.InfoDetail import Info
+import matplotlib.pyplot as plt
+import pprint
+
 
 def stop():
     d.addBoth(lambda _: reactor.stop())
@@ -28,21 +32,54 @@ def configureRunner():
 
 def countyInfo(countyName, detailedInfo):
     # provide county information
+    result = dict()
 
-    # If more detailed infor required. Provide some graphs and comparisions.
-    pass
+    infoByCounty = Info(countyName)
+    totalInfo = Info()
+
+    totalPosCasesInCounty = infoByCounty.getTotalPositiveCasesByCounty() # Total no. of positive cases
+    totalTestsInCounty = infoByCounty.getTotalTestsByCounty()# Total tests conducted in the county
+    totalPosCases = totalInfo.getTotalPositiveCases()
+
+    result['Total Number of positive cases in your County'] = totalPosCasesInCounty
+    result['Total tests conducted in your County'] = totalTestsInCounty
+
+    # If more detailed information required. Provide some graphs and comparisons.
+    if 'Y' == detailedInfo:
+        # Total percentage of positive cases of county against positive cases in country
+        posCasesAgainstCountryPer = totalPosCasesInCounty * 100 / totalPosCases
+
+        # Percentage of positive cases against total tests done in the county.
+        positiveCaseByTestPer = totalPosCasesInCounty * 100 / totalTestsInCounty
+
+        # Mostly affected age-group in your county
+        mostAff = infoByCounty.mostAffectedAge()
+
+        result['Positive tests percentage in you County'] = str(round(positiveCaseByTestPer,2)) + "%"
+        result['Percentage of positive cases in your County by Country Avg.'] = str(
+            round(posCasesAgainstCountryPer, 2)) + "%"
+        result['Most Affected groups are from range '] = mostAff
+
+        posCasesPerDay = infoByCounty.posCasesPerDayByCounty()
+        plt.plot(posCasesPerDay)
+        plt.ylabel("No. of positive cases per day in your county.")
+        plt.show()
+
+    return result
 
 
 def emergencyInfoByCounty(county):
+    # Get helpline number by county.
     pass
 
 
 def getSymptoms():
+    # Covid-29 known symptoms
     pass
 
 
 def checkExit(inp):
-    if inp.lower() == 'done':
+    if inp.lower() == 'done' or inp.lower() == 'exit' or inp.lower() == 'quit':
         sleep(1)
         print()
         print()
@@ -61,34 +98,39 @@ if __name__ == '__main__':
     d = runner.crawl(CovidEESpider)
 
     try:
+        print("Welcome to the Covid-Informer App.")
+        sleep(1)
         print("Fetching initial information of Estonia ...")
         sleep(3)
         file = open("resources/scrapedResults.txt", 'r', encoding='utf8')
         print(file.read())  # Provide an elegant result from the file.
         file.close()
         while True:
-            county = input("Enter the county you want covid-19 information for(done to exit): ")
-            countyInfo(county, 'N')  # Fetch the county info from the Govt. provided api.
+            print("Follow the instructions to get latest updates and more info on Covid-19 relevant to you county")
+            print("Or, Enter done/exit/quit to exit the application anytime!")
+            sleep(2)
+            county = input("Enter the county you want covid-19 information for: ")
+            print(pprint.pformat(countyInfo(county, 'N'), indent=1, width=80))  # Fetch the county info from the Govt. provided api.
             checkExit(county)
 
-            detailedInfo = input("Do you want more detailed covid-19 info of the particular county? [Y/N]")
+            detailedInfo = input("Do you want more detailed covid-19 info of the particular county? [Y/N] ")
             if detailedInfo.lower() == 'y':
-                countyInfo(county, 'Y')
+                print(pprint.pformat(countyInfo(county, 'Y'), indent=1, width=80))
             else:
                 checkExit(detailedInfo)
 
-            symptoms = input("Would you like to know the symptoms for Covid-19? [Y/N]")
+            symptoms = input("Would you like to know the symptoms for Covid-19? [Y/N] ")
             if symptoms.lower() == 'y':
                 getSymptoms()
             else:
                 checkExit(symptoms)
 
-            emergencyHelp = input("Would you like to get the emergency contact of your county [Y/N]")
+            emergencyHelp = input("Would you like to get the emergency contact of your county [Y/N] ")
             if emergencyHelp.lower() == 'y':
                 emergencyInfoByCounty(county)
             else:
                 checkExit(emergencyHelp)
-            sleep(2)
+            sleep(1)
             print("Let's continue with another county info ...")
             sleep(3)
     except Exception as e:
