@@ -11,5 +11,12 @@ class CovidPipeline(object):
         f = open("resources/scrapedResults.txt", "w+", encoding='utf8')
         f.write(str(item))
         f.close()
-        # print("Scraped info dumped to resources!!")
+        return item
+
+
+class CovidSymptoms(object):
+    def process_item(self, item, spider):
+        f = open("resources/covidSymptoms.txt", "w+", encoding='utf8')
+        f.write(str(item))
+        f.close()
         return item

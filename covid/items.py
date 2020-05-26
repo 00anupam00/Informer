@@ -14,3 +14,8 @@ class CovidItem(scrapy.Item):
     covidStats = scrapy.Field()
     news = scrapy.Field()
     getHelp = scrapy.Field()
+
+
+class CovidSymptomsItem(scrapy.Item):
+    title = scrapy.Field()
+    symptoms = scrapy.Field()

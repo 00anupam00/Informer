@@ -5,23 +5,19 @@ from scrapy.utils.project import get_project_settings
 from twisted.internet import reactor
 from scrapy.utils.log import configure_logging
 
-from covid.settings import ITEM_PIPELINES, BOT_NAME, SPIDER_MODULES
+from covid.settings import BOT_NAME, SPIDER_MODULES
+from covid.spiders.CovidSymptoms import CovidSymptoms
 from covid.spiders.covidEE import CovidEESpider
 
-from  covid.InfoDetail import Info
+from utils.InfoDetail import Info
 import matplotlib.pyplot as plt
 import pprint
-
-
-def stop():
-    d.addBoth(lambda _: reactor.stop())
-    reactor.run()
 
 
 def configureRunner():
     global s
     s = get_project_settings()
-    s['ITEM_PIPELINES'] = ITEM_PIPELINES
+    # s['ITEM_PIPELINES'] = ITEM_PIPELINES
     s['LOG_LEVEL'] = 'INFO'
     s['LOG_ENABLED'] = False
     s['BOT_NAME'] = BOT_NAME
@@ -75,6 +71,10 @@ def emergencyInfoByCounty(county):
 
 def getSymptoms():
     # Covid-29 known symptoms
+    # file = open("resources/scrapedResults.txt", 'r', encoding='utf8')
+    # print(file.read())  # Provide an elegant result from the file.
+    # file.close()
+
     pass
 
 
@@ -82,21 +82,10 @@ def checkExit(inp):
     if inp.lower() == 'done' or inp.lower() == 'exit' or inp.lower() == 'quit':
         sleep(1)
         print()
-        print()
         raise ValueError("Thank you for using the Covid-app. Stay Safe!")
 
 
-if __name__ == '__main__':
-
-    # Run the Spiders
-    # Read the saved file for info
-    # Parse the file
-    # Display the output here.
-
-    configureRunner()
-    runner = CrawlerRunner(settings=s)
-    d = runner.crawl(CovidEESpider)
-
+def interact():
     try:
         print("Welcome to the Covid-Informer App.")
         sleep(1)
@@ -105,13 +94,16 @@ if __name__ == '__main__':
         file = open("resources/scrapedResults.txt", 'r', encoding='utf8')
         print(file.read())  # Provide an elegant result from the file.
         file.close()
+        print("Follow the instructions to get latest updates and more info on Covid-19 relevant to your county")
+        print("Or, Enter done/exit/quit to exit the application anytime!")
         while True:
-            print("Follow the instructions to get latest updates and more info on Covid-19 relevant to you county")
-            print("Or, Enter done/exit/quit to exit the application anytime!")
-            sleep(2)
+            sleep(1)
             county = input("Enter the county you want covid-19 information for: ")
-            print(pprint.pformat(countyInfo(county, 'N'), indent=1, width=80))  # Fetch the county info from the Govt. provided api.
             checkExit(county)
+
+            print(pprint.pformat(countyInfo(county, 'N'), indent=1,
+                                 width=80))  # Fetch the county info from the Govt. provided api.
+
 
             detailedInfo = input("Do you want more detailed covid-19 info of the particular county? [Y/N] ")
             if detailedInfo.lower() == 'y':
@@ -135,6 +127,26 @@ if __name__ == '__main__':
             sleep(3)
     except Exception as e:
         print(e)
-        stop()
-    else:
-        stop()
+
+
+
+
+
+if __name__ == '__main__':
+
+    # Run the Spiders
+    # Read the saved file for info
+    # Parse the file
+    # Display the output here.
+
+    configureRunner()
+    runner = CrawlerRunner(settings=s)
+    runner.crawl(CovidEESpider)
+    runner.crawl(CovidSymptoms)
+    d = runner.join()
+    d.addBoth(lambda _: reactor.stop())
+    reactor.run()
+
+
+    # Interact with the user
+    interact()

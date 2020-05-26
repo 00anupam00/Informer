@@ -8,10 +8,14 @@ class CovidEESpider(scrapy.Spider):
     name = 'covidEE'
     allowed_domains = ['terviseamet.ee']
     start_urls = [URL1]
+    custom_settings = {
+        'ITEM_PIPELINES': {
+            'covid.pipelines.CovidPipeline': 300
+        }
+    }
 
 
     def parse(self, response):
-        # print("Response Text", response.text)
         metricsInfo = list()
         result = dict()
         titleInfo = response.xpath('//h2')[2]

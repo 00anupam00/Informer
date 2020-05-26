@@ -1,6 +1,6 @@
-{'covidStats': {'CONFIRMED CASES': '1824',
+{'covidStats': {'CONFIRMED CASES': '1834',
                 'DEATHS': '65',
-                'TESTS ADMINISTERED': '76 590',
+                'TESTS ADMINISTERED': '78 086',
                 'notice': ' (PNG)',
                 'source': 'https://www.terviseamet.ee/en/covid19'},
  'getHelp': {'help': ['The hotline\xa0☎️\xa01247to provide information on '
