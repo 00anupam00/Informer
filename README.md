@@ -5,8 +5,8 @@ The Info gathered is most-relevant to the user as the user provides his County n
 It is trust-worthy as the source is various govt webpages and updated.
 
 # Frameworks used
-Python 3.7.6
-Git versioning
+1. Python 3.7.6
+2. Git versioning
 
 ## External Libraries used:
 1. Scrapy
