@@ -11,9 +11,8 @@ from covid.spiders.covidEE import CovidEESpider
 
 from utils.InfoDetail import Info
 import matplotlib.pyplot as plt
-import pprint
 import json
-import unicodedata
+import os
 
 
 def configureRunner():
@@ -79,9 +78,8 @@ def getSymptoms():
 
 def checkExit(inp):
     if inp.lower() == 'done' or inp.lower() == 'exit' or inp.lower() == 'quit':
-        sleep(1)
         print()
-        raise ValueError("Thank you for using the Covid-app. Stay Safe!")
+        raise ValueError("Thank you for using the Covid-Informer app. Stay Safe!")
 
 
 def interact():
@@ -130,6 +128,7 @@ def interact():
             print("Let's continue with another county info ...")
             sleep(3)
     except Exception as e:
+        cleanUp()
         print(e)
 
 
@@ -141,14 +140,15 @@ def plog(object):
         print(",\n".join(object))
     print()
 
+def cleanUp():
+    if os.path.exists("resources/scrapedResults.txt"):
+        os.remove("resources/scrapedResults.txt")
+    if os.path.exists("resources/covidSymptoms.txt"):
+        os.remove("resources/covidSymptoms.txt")
+    print("Clean up complete!")
 
-if __name__ == '__main__':
 
-    # Run the Spiders
-    # Read the saved file for info
-    # Parse the file
-    # Display the output here.
-
+def crawl():
     configureRunner()
     runner = CrawlerRunner(settings=s)
     runner.crawl(CovidEESpider)
@@ -157,6 +157,11 @@ if __name__ == '__main__':
     d.addBoth(lambda _: reactor.stop())
     reactor.run()
 
+
+if __name__ == '__main__':
+
+    # Run the Spiders
+    crawl()
 
     # Interact with the user
     interact()

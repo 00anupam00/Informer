@@ -58,6 +58,9 @@ class CovidEESpider(scrapy.Spider):
         for attr in help.css('div.static-infobox02 p.node-lead-default'):
             delim = attr.css('span.node-text-color-red strong::text').get()
             if delim is None: delim = attr.css('u a::text').get()
-            getHelp['help'].append(delim.join(attr.css('p::text').getall()).replace('\xa0',' '))
+            if len(attr.css('p::text').getall()) == 2:
+                getHelp['help'].append(delim.join(attr.css('p::text').getall()).replace('\xa0',' '))
+            elif len(attr.css('p::text').getall()) == 1:
+                getHelp['help'].append((attr.css('p::text').getall()[0] + delim).replace('\xa0',' '))
         result['getHelp'] = getHelp
         return result
