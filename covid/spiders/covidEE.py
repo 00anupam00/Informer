@@ -24,7 +24,7 @@ class CovidEESpider(scrapy.Spider):
         divHelp = response.css('div.static-infobox02')
 
         self.getCovidStats(divs, metricsInfo) # Get covid1-19 related metrics list
-        self.getNotice(divs, result) # Get official notice
+        #self.getNotice(divs, result) # Get official notice
         self.getHelp(divHelp[1], result)
         yield self.getItem(metricsInfo, result)
 
@@ -58,6 +58,6 @@ class CovidEESpider(scrapy.Spider):
         for attr in help.css('div.static-infobox02 p.node-lead-default'):
             delim = attr.css('span.node-text-color-red strong::text').get()
             if delim is None: delim = attr.css('u a::text').get()
-            getHelp['help'].append(delim.rstrip().join(attr.css('p::text').getall()))
+            getHelp['help'].append(delim.join(attr.css('p::text').getall()).replace('\xa0',' '))
         result['getHelp'] = getHelp
         return result

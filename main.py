@@ -12,12 +12,13 @@ from covid.spiders.covidEE import CovidEESpider
 from utils.InfoDetail import Info
 import matplotlib.pyplot as plt
 import pprint
+import json
+import unicodedata
 
 
 def configureRunner():
     global s
     s = get_project_settings()
-    # s['ITEM_PIPELINES'] = ITEM_PIPELINES
     s['LOG_LEVEL'] = 'INFO'
     s['LOG_ENABLED'] = False
     s['BOT_NAME'] = BOT_NAME
@@ -54,7 +55,8 @@ def countyInfo(countyName, detailedInfo):
         result['Positive tests percentage in you County'] = str(round(positiveCaseByTestPer,2)) + "%"
         result['Percentage of positive cases in your County by Country Avg.'] = str(
             round(posCasesAgainstCountryPer, 2)) + "%"
-        result['Most Affected groups are from range '] = mostAff
+        result['Most Affected groups are from range '] = mostAff[0]
+        result['Number of positive cases for that group range '] = mostAff[1]
 
         posCasesPerDay = infoByCounty.posCasesPerDayByCounty()
         plt.plot(posCasesPerDay)
@@ -64,18 +66,15 @@ def countyInfo(countyName, detailedInfo):
     return result
 
 
-def emergencyInfoByCounty(county):
-    # Get helpline number by county.
-    pass
-
-
 def getSymptoms():
     # Covid-29 known symptoms
-    # file = open("resources/scrapedResults.txt", 'r', encoding='utf8')
-    # print(file.read())  # Provide an elegant result from the file.
-    # file.close()
-
-    pass
+    file = open("resources/covidSymptoms.txt", 'r', encoding='utf8')
+    eestiSymp = dict()
+    for line in file:
+        eestiSymp.update(json.loads(line))
+    file.close()
+    print(eestiSymp['title'])
+    plog(eestiSymp['symptoms'])
 
 
 def checkExit(inp):
@@ -87,39 +86,44 @@ def checkExit(inp):
 
 def interact():
     try:
-        print("Welcome to the Covid-Informer App.")
+        print("Welcome to the Covid-Informer App!")
         sleep(1)
-        print("Fetching initial information of Estonia ...")
-        sleep(3)
+        print("Fetching info ...")
+        print()
+        sleep(2)
         file = open("resources/scrapedResults.txt", 'r', encoding='utf8')
-        print(file.read())  # Provide an elegant result from the file.
+        eestiInfo = dict()
+        for line in file:
+            eestiInfo.update(json.loads(line))
         file.close()
+        print(eestiInfo['title'])
+        plog(eestiInfo['covidStats'])
+
         print("Follow the instructions to get latest updates and more info on Covid-19 relevant to your county")
         print("Or, Enter done/exit/quit to exit the application anytime!")
+        print()
         while True:
             sleep(1)
             county = input("Enter the county you want covid-19 information for: ")
             checkExit(county)
+            plog(countyInfo(county, 'N'))
 
-            print(pprint.pformat(countyInfo(county, 'N'), indent=1,
-                                 width=80))  # Fetch the county info from the Govt. provided api.
-
-
-            detailedInfo = input("Do you want more detailed covid-19 info of the particular county? [Y/N] ")
+            detailedInfo = input("Do you want more detailed covid-19 info of the particular county? [Y/N]: ")
             if detailedInfo.lower() == 'y':
-                print(pprint.pformat(countyInfo(county, 'Y'), indent=1, width=80))
+                plog(countyInfo(county, 'Y'))
             else:
                 checkExit(detailedInfo)
 
-            symptoms = input("Would you like to know the symptoms for Covid-19? [Y/N] ")
+            symptoms = input("Would you like to know the symptoms for Covid-19? [Y/N]: ")
             if symptoms.lower() == 'y':
                 getSymptoms()
             else:
                 checkExit(symptoms)
-
-            emergencyHelp = input("Would you like to get the emergency contact of your county [Y/N] ")
+            emergencyHelp = input("Would you like to get the emergency contact [Y/N]: ")
             if emergencyHelp.lower() == 'y':
-                emergencyInfoByCounty(county)
+                helpData = eestiInfo['getHelp']
+                print(helpData['title'])
+                plog(helpData['help'])
             else:
                 checkExit(emergencyHelp)
             sleep(1)
@@ -129,7 +133,13 @@ def interact():
         print(e)
 
 
-
+def plog(object):
+    if isinstance(object, dict):
+        for k,v in object.items():
+            print(k +" : "+ str(v))
+    elif isinstance(object, list):
+        print(",\n".join(object))
+    print()
 
 
 if __name__ == '__main__':
